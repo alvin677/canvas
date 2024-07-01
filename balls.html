@@ -1,0 +1,73 @@
+<html>
+  <body>
+    <canvas id="canvas"></canvas>
+  </body>
+
+  <script>
+    let canvas = document.getElementById('canvas');
+    let ctx = canvas.getContext('2d');
+    resizeCanvas();
+
+    window.addEventListener('resize', resizeCanvas);
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    let balls = [];
+
+    for (let i = 0; i < 1000; i++) {
+      balls.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        dx: 5,
+        dy: 5,
+        color: getRandomColor(),
+        rotation: Math.random() * 360
+      });
+    }
+
+    function getRandomColor() {
+      let letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    function drawBalls() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      balls.forEach(ball => {
+        ball.x += ball.dx;
+        ball.y += ball.dy;
+
+        if (ball.x + ball.dx > canvas.width || ball.x + ball.dx < 0) {
+          ball.dx = -ball.dx;
+        }
+
+        if (ball.y + ball.dy > canvas.height || ball.y + ball.dy < 0) {
+          ball.dy = -ball.dy;
+        }
+
+        ctx.save();
+        ctx.translate(ball.x, ball.y);
+        ctx.rotate((Math.PI / 180) * ball.rotation);
+
+        ctx.beginPath();
+        ctx.arc(0, 0, 20, 0, Math.PI * 2);
+        ctx.fillStyle = ball.color;
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.restore();
+      });
+
+      requestAnimationFrame(drawBalls);
+    }
+
+    drawBalls(); // Start the animation
+  </script>
+</html>
